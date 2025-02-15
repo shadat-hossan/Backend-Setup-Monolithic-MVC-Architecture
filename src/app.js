@@ -58,7 +58,7 @@ if (config.env === "production") {
 app.use(status());
 
 // v1 api routes
-app.use("/v1", routes);
+app.use("/api/v1", routes);
 
 //testing API is alive
 app.get("/test", (req, res) => {

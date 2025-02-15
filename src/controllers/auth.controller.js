@@ -10,45 +10,29 @@ const {
 } = require("../services");
 
 const register = catchAsync(async (req, res) => {
-  const isUser = await userService.getUserByEmail(req.body.email);
+  const { email, fullName, firstName, lastName, ...rest } = req.body;
+  const isUser = await userService.getUserByEmail(email);
 
-  if (isUser && isUser.isEmailVerified === false) {
-    const user = await userService.isUpdateUser(isUser.id, req.body);
-    const tokens = await tokenService.generateAuthTokens(user);
-    res.status(httpStatus.CREATED).json(
-      response({
-        message: "Thank you for registering. Please verify your email",
-        status: "OK",
-        statusCode: httpStatus.CREATED,
-        data: {},
-      })
-    );
-  } else if (isUser && isUser.isDeleted === false) {
-    throw new ApiError(httpStatus.BAD_REQUEST, "Email already taken");
-  } else if (isUser && isUser.isDeleted === true) {
-    const user = await userService.isUpdateUser(isUser.id, req.body);
-    const tokens = await tokenService.generateAuthTokens(user);
-    res.status(httpStatus.CREATED).json(
-      response({
-        message: "Thank you for registering. Please verify your email",
-        status: "OK",
-        statusCode: httpStatus.CREATED,
-        data: {},
-      })
-    );
+  if (isUser) {
+    if (isUser.isDeleted) {
+      await userService.isUpdateUser(isUser.id, { fullName: fullName || `${firstName} ${lastName}`, email, ...rest });
+    } else if (!isUser.isEmailVerified) {
+      await userService.isUpdateUser(isUser.id, { fullName: fullName || `${firstName} ${lastName}`, email, ...rest });
+    } else {
+      throw new ApiError(httpStatus.BAD_REQUEST, "Email already taken");
+    }
   } else {
-    const user = await userService.createUser(req.body);
-    const tokens = await tokenService.generateAuthTokens(user);
-
-    res.status(httpStatus.CREATED).json(
-      response({
-        message: "Thank you for registering. Please verify your email",
-        status: "OK",
-        statusCode: httpStatus.CREATED,
-        data: {},
-      })
-    );
+    await userService.createUser({ fullName: fullName || `${firstName} ${lastName}`, email, ...rest });
   }
+
+  res.status(httpStatus.CREATED).json(
+    response({
+      message: "Thank you for registering. Please verify your email",
+      status: "OK",
+      statusCode: httpStatus.CREATED,
+      data: {},
+    })
+  );
 });
 
 const login = catchAsync(async (req, res) => {

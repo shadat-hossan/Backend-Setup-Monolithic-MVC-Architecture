@@ -6,11 +6,21 @@ const { roles } = require("../config/roles");
 
 const userSchema = mongoose.Schema(
   {
+    firstName: {
+      type: String,
+      required: false,
+      default: null,
+    },
+    lastName: {
+      type: String,
+      required: false,
+      default: null,
+    },
     fullName: {
       type: String,
       required: false,
       trim: true,
-      default: "",
+      default: null,
     },
     email: {
       type: String,
@@ -26,15 +36,15 @@ const userSchema = mongoose.Schema(
     },
 
     image: {
-      type: Object,
+      type: String,
       required: [true, "Image is must be Required"],
-      default: { url: `/uploads/users/user.png`, path: "null" },
+      default: "/uploads/users/user.png",
     },
     password: {
       type: String,
       required: false,
       trim: true,
-      minlength: 8, 
+      minlength: 8,
       validate(value) {
         if (!value.match(/\d/) || !value.match(/[a-zA-Z]/)) {
           throw new Error(
@@ -42,45 +52,46 @@ const userSchema = mongoose.Schema(
           );
         }
       },
-      private: true, // used by the toJSON plugin
+      private: true,
     },
     role: {
       type: String,
       enum: roles,
     },
-    rand: {
-      type: Number,
+    callingCode: {
+      type: String,
       required: false,
-      default: 0,
+      default: null
     },
     phoneNumber: {
       type: Number,
       required: false,
+      default: null
     },
     nidNumber: {
       type: Number,
       required: false,
+      default: null
     },
     isNIDVerified: {
       type: Boolean,
       default: false,
+      default: null
     },
     dataOfBirth: {
       type: String,
       required: false,
-    },
-    interest: {
-      type: Array,
-      required: false,
-      default: [],
+      default: null
     },
     address: {
       type: String,
       required: false,
+      default: null
     },
     oneTimeCode: {
       type: String,
       required: false,
+      default: null
     },
     isEmailVerified: {
       type: Boolean,
@@ -90,16 +101,49 @@ const userSchema = mongoose.Schema(
       type: Boolean,
       default: false,
     },
-    isInterest: {
-      type: Boolean,
-      default: false,
-    },
     isProfileCompleted: {
       type: Boolean,
       default: false,
     },
+    fcmToken: { // onlly uee for push notification / mobile focus *
+      type: String,
+      required: false,
+      default: null,
+    },
+    isDeleted: {
+      type: Boolean,
+      default: false
+    },
 
-    isDeleted: { type: Boolean, default: false },
+    securitySettings: {
+      recoveryEmail: {
+        type: String,
+        lowercase: true,
+        trim: true,
+        match: [/^\S+@\S+\.\S+$/, "Invalid email format"],
+        default: null,
+      },
+      recoveryPhone: {
+        type: String,
+        trim: true,
+        match: [/^\+?[1-9]\d{1,14}$/, "Invalid phone number format"],
+        default: null,
+      },
+      securityQuestion: {
+        type: String,
+        trim: true,
+        default: null,
+      },
+      securityAnswer: {
+        type: String,
+        required: function () {
+          return !!this.securityQuestion;
+        },
+        set: (answer) => (answer ? require("crypto").createHash("sha256").update(answer).digest("hex") : null),
+        select: false,
+        default: null,
+      },
+    },
   },
   {
     timestamps: true,

@@ -10,7 +10,7 @@ const createUser = async (userBody) => {
   }
   const oneTimeCode = Math.floor(Math.random() * (999999 - 100000 + 1)) + 100000;
 
-  if (userBody.role === "client" || userBody.role === "employee") {
+  if (userBody.role === "user" || userBody.role === "admin") {
 
     sendEmailVerification(userBody.email, oneTimeCode);
   }
@@ -91,8 +91,7 @@ const isUpdateUser = async (userId, updateBody) => {
   const oneTimeCode =
     Math.floor(Math.random() * (999999 - 100000 + 1)) + 100000;
 
-
-  if (updateBody.role === "client" || updateBody.role === "employee") {
+  if (updateBody.role === "user" || updateBody.role === "admin") {
     sendEmailVerification(updateBody.email, oneTimeCode);
   }
 
