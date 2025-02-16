@@ -1,6 +1,6 @@
 # Backend
 
-Ndolo Meet is a backend service for a mobile and web application designed for online meetings and interactions. This backend provides authentication, real-time communication, and secure API endpoints.
+This is a Backend Initial Setup using Monolithic MVC Architecture. It is designed for scalable and secure applications, providing authentication, real-time communication, and secure API endpoints to support both web and mobile platforms.
 
 ## 📌 Features
 
@@ -45,8 +45,8 @@ Ndolo Meet is a backend service for a mobile and web application designed for on
 ### 1️⃣ Clone the repository
 
 ```sh
-git clone https://github.com/shadat-hossan/Backend-initial-setup.git
-cd Backend-initial-setup
+git clone https://github.com/shadat-hossan/Backend-Setup-Monolithic-MVC-Architecture.git
+cd Backend-Setup-Monolithic-MVC-Architecture
 ```
 
 ### 2️⃣ Install dependencies
@@ -132,10 +132,11 @@ Feel free to fork this repository and submit pull requests.
 
 ## 📧 Contact
 
-**Author**: Md. Shadat Hossain & Sahinur Islam
+**Authors**: [Md. Shadat Hossain](mailto:shadathossan3500@gmail.com) & Sahinur Islam
 
 If you have any questions, feel free to reach out!
 
 ---
 
 ### 🌟 Star the repo if you like it! ⭐
+
