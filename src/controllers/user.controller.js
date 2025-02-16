@@ -32,6 +32,33 @@ const getUsers = catchAsync(async (req, res) => {
   );
 });
 
+const getProfile = catchAsync(async (req, res) => {
+  const user = await userService.getUserById(req.user.id);
+
+  if (!user) {
+    throw new ApiError(httpStatus.NOT_FOUND, "User not found");
+  }
+
+  if (user.isDeleted) {
+    throw new ApiError(httpStatus.NOT_FOUND, "The account is deleted");
+  }
+
+  if (user.isBlocked) {
+    throw new ApiError(httpStatus.NOT_FOUND, "The account is blocked");
+  }
+
+  const { securitySettings } = user;
+
+  res.status(httpStatus.OK).json(
+    response({
+      message: "User Profile",
+      status: "OK",
+      statusCode: httpStatus.OK,
+      data: { user, securitySettings },
+    })
+  );
+});
+
 const getUser = catchAsync(async (req, res) => {
   let user = await userService.getUserById(req.params.userId);
 
@@ -76,6 +103,28 @@ const updateUser = catchAsync(async (req, res) => {
   );
 });
 
+const updateProfile = catchAsync(async (req, res) => {
+  if (req.file) {
+    req.body.image = `/uploads/users/${req.file.filename}`;
+  }
+
+  // Set fullName if firstName or lastName is provided
+  if (!req.body.fullName && (req.body.firstName || req.body.lastName)) {
+    req.body.fullName = `${req.body.firstName || ''} ${req.body.lastName || ''}`.trim();
+  }
+
+  const user = await userService.updateUserById(req.user.id, req.body);
+
+  res.status(httpStatus.OK).json(
+    response({
+      message: "User Updated",
+      status: "OK",
+      statusCode: httpStatus.OK,
+      data: user,
+    })
+  );
+});
+
 const deleteUser = catchAsync(async (req, res) => {
   await userService.deleteUserById(req.params.userId);
   res.status(httpStatus.OK).json(
@@ -92,6 +141,8 @@ module.exports = {
   createUser,
   getUsers,
   getUser,
+  getProfile,
   updateUser,
+  updateProfile,
   deleteUser,
 };

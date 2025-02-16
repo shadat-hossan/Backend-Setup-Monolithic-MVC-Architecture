@@ -34,7 +34,6 @@ const userSchema = mongoose.Schema(
         }
       },
     },
-
     image: {
       type: String,
       required: [true, "Image is must be Required"],
@@ -79,7 +78,7 @@ const userSchema = mongoose.Schema(
       default: null
     },
     dataOfBirth: {
-      type: String,
+      type: Date,
       required: false,
       default: null
     },

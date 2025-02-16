@@ -27,21 +27,21 @@ const getUser = {
 };
 
 const updateUser = {
-  
-  // params: Joi.object().keys({
-  //   userId: Joi.required().custom(objectId),
-  // }),
-  // file: Joi.object().keys({
-  //   filename: Joi.string().required(),
-  // }),
-  // body: Joi.object()
-  //   .keys({
-  //     email: Joi.string().email(),
-  //     password: Joi.string().custom(password),
-  //     name: Joi.string(),
-  //     phoneNumber: Joi.string(),
-  //   })
-    // .min(1),
+  file: Joi.object().keys({
+    filename: Joi.string().required(),
+  }),
+  body: Joi.object()
+    .keys({
+      firstName: Joi.string(),
+      lastName: Joi.string(),
+      fullName: Joi.string(),
+      // email: Joi.string().email(),
+      phoneNumber: Joi.string(),
+      callingCode: Joi.string(),
+      nidNumber: Joi.string(),
+      dataOfBirth: Joi.string(),
+      address: Joi.string(),
+    })
 };
 
 const deleteUser = {
@@ -52,7 +52,7 @@ const deleteUser = {
 
 
 const getHome = {
- 
+
 };
 
 module.exports = {

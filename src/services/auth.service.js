@@ -26,7 +26,7 @@ const logout = async (refreshToken) => {
   if (!refreshTokenDoc) {
     throw new ApiError(httpStatus.NOT_FOUND, "Not found");
   }
-  await refreshTokenDoc.remove();
+  await refreshTokenDoc.deleteOne();
 };
 
 
@@ -92,8 +92,7 @@ const verifyEmail = async (reqBody, reqQuery) => {
   console.log("reqBody", email);
   console.log("reqQuery", oneTimeCode);
   const user = await userService.getUserByEmail(email);
-  // console.log("user", user);
-
+  
   // if(user.oneTimeCode === 'verified'){
   //   throw new ApiError(
   //     httpStatus.BAD_REQUEST,

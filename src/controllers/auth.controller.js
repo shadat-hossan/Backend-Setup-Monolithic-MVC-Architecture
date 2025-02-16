@@ -15,31 +15,31 @@ const register = catchAsync(async (req, res) => {
 
   if (isUser) {
     if (isUser.isDeleted) {
-      await userService.isUpdateUser(isUser.id, { 
-        fullName: fullName || `${firstName} ${lastName}`, 
-        firstName, 
-        lastName, 
-        email, 
-        ...rest 
+      await userService.isUpdateUser(isUser.id, {
+        fullName: fullName || `${firstName} ${lastName}`,
+        firstName,
+        lastName,
+        email,
+        ...rest
       });
     } else if (!isUser.isEmailVerified) {
-      await userService.isUpdateUser(isUser.id, { 
-        fullName: fullName || `${firstName} ${lastName}`, 
-        firstName, 
-        lastName, 
-        email, 
-        ...rest 
+      await userService.isUpdateUser(isUser.id, {
+        fullName: fullName || `${firstName} ${lastName}`,
+        firstName,
+        lastName,
+        email,
+        ...rest
       });
     } else {
       throw new ApiError(httpStatus.BAD_REQUEST, "Email already taken");
     }
   } else {
-    await userService.createUser({ 
-      fullName: fullName || `${firstName} ${lastName}`, 
-      firstName, 
-      lastName, 
-      email, 
-      ...rest 
+    await userService.createUser({
+      fullName: fullName || `${firstName} ${lastName}`,
+      firstName,
+      lastName,
+      email,
+      ...rest
     });
   }
 
@@ -92,8 +92,14 @@ const login = catchAsync(async (req, res) => {
 });
 
 const logout = catchAsync(async (req, res) => {
-  // await authService.logout(req.body.refreshToken);
-  // res.status(httpStatus.OK).send();
+  await authService.logout(req.body.refreshToken);
+  res.status(httpStatus.OK).json(
+    response({
+      message: "LogOut Successful",
+      status: "OK",
+      statusCode: httpStatus.OK,
+    })
+  );
 });
 
 const refreshTokens = catchAsync(async (req, res) => {

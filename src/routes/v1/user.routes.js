@@ -11,17 +11,18 @@ const uploadUsers = userFileUploadMiddleware(UPLOADS_FOLDER_USERS);
 
 const router = express.Router();
 
-
-router.route("/").get(auth("common"), userController.getUsers);
+router.route("/self/in").get(auth("common"), userController.getProfile);
 
 router
-  .route("/:userId")
-  .get(auth("common"), userController.getUser)
+  .route("/self/update")
   .patch(
     auth("common"),
+    validate(userValidation.updateUser),
     [uploadUsers.single("image")],
     convertHeicToPngMiddleware(UPLOADS_FOLDER_USERS),
-    userController.updateUser
+    userController.updateProfile
   );
+
+  
 
 module.exports = router;
