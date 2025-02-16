@@ -8,7 +8,7 @@ const ApiError = require('../utils/ApiError');
 const { tokenTypes } = require('../config/tokens');
 
 
-const generateToken = (activityId,userId, expires, type, secret = config.jwt.secret) => {
+const generateToken = (activityId, userId, expires, type, secret = config.jwt.secret) => {
   const payload = {
     sub: userId,
     iat: moment().unix(),
@@ -45,23 +45,23 @@ const verifyToken = async (token, type) => {
 };
 
 
-const generateAuthTokens = async (user,activityId) => {
+const generateAuthTokens = async (user, activityId) => {
   const accessTokenExpires = moment().add(config.jwt.accessExpirationMinutes, 'minutes');
-  const accessToken = generateToken(activityId,user.id, accessTokenExpires, tokenTypes.ACCESS);
+  const accessToken = generateToken(activityId, user.id, accessTokenExpires, tokenTypes.ACCESS);
 
   const refreshTokenExpires = moment().add(config.jwt.refreshExpirationDays, 'days');
   const refreshToken = generateToken(user.id, refreshTokenExpires, tokenTypes.REFRESH);
-  // await saveToken(refreshToken, user.id, refreshTokenExpires, tokenTypes.REFRESH);
+  await saveToken(refreshToken, user.id, refreshTokenExpires, tokenTypes.REFRESH);
 
   return {
     access: {
       token: accessToken,
       expires: accessTokenExpires.toDate(),
     },
-    // refresh: {
-    //   token: refreshToken,
-    //   expires: refreshTokenExpires.toDate(),
-    // },
+    refresh: {
+      token: refreshToken,
+      expires: refreshTokenExpires.toDate(),
+    },
   };
 };
 

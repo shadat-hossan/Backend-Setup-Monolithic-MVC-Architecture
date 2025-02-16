@@ -16,6 +16,7 @@ const login = {
   body: Joi.object().keys({
     email: Joi.string().required(),
     password: Joi.string().required(),
+    fcmToken: Joi.string(),
   }),
 };
 
@@ -39,10 +40,11 @@ const forgotPassword = {
 
 const resetPassword = {
   body: Joi.object().keys({
-    password: Joi.string().required().custom(password),
     email: Joi.string().required(),
+    password: Joi.string().required().custom(password),
   }),
 };
+
 const changePassword = {
   body: Joi.object().keys({
     oldPassword: Joi.string().required().custom(password),
@@ -53,7 +55,7 @@ const changePassword = {
 const verifyEmail = {
   body: Joi.object().keys({
     email: Joi.string().required(),
-    oneTimeCode: Joi.string().required(),
+    code: Joi.string().required(),
   }),
 };
 

@@ -15,14 +15,32 @@ const register = catchAsync(async (req, res) => {
 
   if (isUser) {
     if (isUser.isDeleted) {
-      await userService.isUpdateUser(isUser.id, { fullName: fullName || `${firstName} ${lastName}`, email, ...rest });
+      await userService.isUpdateUser(isUser.id, { 
+        fullName: fullName || `${firstName} ${lastName}`, 
+        firstName, 
+        lastName, 
+        email, 
+        ...rest 
+      });
     } else if (!isUser.isEmailVerified) {
-      await userService.isUpdateUser(isUser.id, { fullName: fullName || `${firstName} ${lastName}`, email, ...rest });
+      await userService.isUpdateUser(isUser.id, { 
+        fullName: fullName || `${firstName} ${lastName}`, 
+        firstName, 
+        lastName, 
+        email, 
+        ...rest 
+      });
     } else {
       throw new ApiError(httpStatus.BAD_REQUEST, "Email already taken");
     }
   } else {
-    await userService.createUser({ fullName: fullName || `${firstName} ${lastName}`, email, ...rest });
+    await userService.createUser({ 
+      fullName: fullName || `${firstName} ${lastName}`, 
+      firstName, 
+      lastName, 
+      email, 
+      ...rest 
+    });
   }
 
   res.status(httpStatus.CREATED).json(
@@ -36,7 +54,7 @@ const register = catchAsync(async (req, res) => {
 });
 
 const login = catchAsync(async (req, res) => {
-  const { email, password } = req.body;
+  const { email, password, fcmToken } = req.body;
   const isUser = await userService.getUserByEmail(email);
   // here we check if the user is in the database or not
   if (isUser?.isDeleted === true) {
@@ -48,7 +66,7 @@ const login = catchAsync(async (req, res) => {
   if (!isUser) {
     throw new ApiError(httpStatus.NOT_FOUND, "No users found with this email");
   }
-  const user = await authService.loginUserWithEmailAndPassword(email, password);
+  const user = await authService.loginUserWithEmailAndPassword(email, password, fcmToken);
 
   setTimeout(async () => {
     try {

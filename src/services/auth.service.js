@@ -6,12 +6,13 @@ const ApiError = require("../utils/ApiError");
 const { tokenTypes } = require("../config/tokens");
 
 
-const loginUserWithEmailAndPassword = async (email, password) => {
-  // console.log("email", email);
+const loginUserWithEmailAndPassword = async (email, password, fcmToken) => {
   const user = await userService?.getUserByEmail(email);
   if (!user || !(await user.isPasswordMatch(password))) {
     throw new ApiError(httpStatus.UNAUTHORIZED, "Incorrect email or password");
   }
+  user.fcmToken = fcmToken;
+  await user.save();
   return user;
 };
 
@@ -52,13 +53,16 @@ const resetPassword = async (newPassword, email) => {
   if (!user) {
     throw new ApiError(httpStatus.NOT_FOUND, "User not found");
   }
-  if (await user.isPasswordMatch(newPassword)) {
-    throw new ApiError(
-      httpStatus.BAD_REQUEST,
-      "New password cannot be the same as old password"
-    );
+
+  if (user.oneTimeCode !== null || user.isResetPassword !== true) {
+    throw new ApiError(httpStatus.BAD_REQUEST, "Please verify your email first");
   }
-  await userService.updateUserById(user.id, { password: newPassword });
+
+  if (await user.isPasswordMatch(newPassword)) {
+    throw new ApiError(httpStatus.BAD_REQUEST, "You have previously used this password. Please choose a different one. Try again with a new password.");
+  }
+
+  await userService.updateUserById(user.id, { password: newPassword, isResetPassword: false });
 
   return user;
 };
@@ -84,7 +88,7 @@ const changePassword = async (reqUser, reqBody) => {
 };
 
 const verifyEmail = async (reqBody, reqQuery) => {
-  const { email, oneTimeCode } = reqBody;
+  const { email, code: oneTimeCode } = reqBody;
   console.log("reqBody", email);
   console.log("reqQuery", oneTimeCode);
   const user = await userService.getUserByEmail(email);
@@ -107,7 +111,7 @@ const verifyEmail = async (reqBody, reqQuery) => {
   } else {
     user.isEmailVerified = true;
     user.oneTimeCode = null;
-    user.isResetPassword = false;
+    // user.isResetPassword = false;
     await user.save();
     return user;
   }
@@ -130,7 +134,7 @@ const verifyNumber = async (phoneNumber, otpCode, email) => {
     user.isPhoneNumberVerified = true;
     user.phoneNumberOTP = null;
     await user.save();
-    return  user;
+    return user;
   }
 };
 
